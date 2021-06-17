@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <header>
+    <link rel="stylesheet" href="styles.css">
+    <h1>Library</h1>
+  </header>
+  <main>
+    
+    <div id="addNewBook"><div><strong>+</strong></div></div>
+
+    
+
+    <div id="container-hidden">
+      <div class="reveal-modal">
+        <h3>Add Book Info</h3>
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" value="The Hobbit"><br><br>
+        <label for="author">Author:</label>
+        <input type="text" id="author" name="author" value="J.R.R. Tolkien"><br><br>
+        <label for="page-count">Page Count:</label>
+        <input type="number" id="page-count" name="page-count" value="456"><br><br>
+        <label for="page-count">Read:</label>
+        <label for="read" class="switch">  
+          <input type="checkbox" id="read">
+          <span class="slider round"></span>
+        </label>
+
+        <div id="add-navigation">
+          <div id="add">Add</div>
+          <div id="close">Close</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+
+  <footer>
+    <script src="scripts.js"></script>
+  </footer>
+</body>
+</html>
