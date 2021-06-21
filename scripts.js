@@ -1,32 +1,73 @@
 let myLibrary = [];
+let selectedBookID = null;
 
 let addBookButton = document.querySelector("#addNewBook");
 addBookButton.addEventListener("click", () => {
-  let newDialog = document.querySelector("#container-hidden")
-  newDialog.id = "container-revealed";
-}); 
+  console.log("add Plus button pressed")
+  openDialog("add")
+});
 
 let closeBookButton = document.querySelector("#close");
 closeBookButton.addEventListener("click", closeDialog); 
 
 let commitAddBookButton = document.querySelector("#add");
 commitAddBookButton.addEventListener("click", () => {
-  addBookDialog();
+  if (commitAddBookButton.textContent == "Add"){ 
+    addBookToLibraryObject() 
+  } else {
+    console.log("selectedBookID: "+selectedBookID);
+    myLibrary[selectedBookID].title = document.querySelector("#title").value;
+    myLibrary[selectedBookID].author = document.querySelector("#author").value;
+    myLibrary[selectedBookID].pages = document.querySelector("#page-count").value;
+    myLibrary[selectedBookID].read = document.querySelector("#read").checked;
+    paintLibrary()
+  }
   closeDialog();
 }); 
 
-function closeDialog () { 
-  let newDialog = document.querySelector("#container-revealed");
-  newDialog.id = "container-hidden";
+function editBook(index) {
+  selectedBookID = index;
+  openDialog("edit");
+  document.querySelector("#title").value = myLibrary[index].title;
+  document.querySelector("#author").value = myLibrary[index].author;
+  document.querySelector("#page-count").value = myLibrary[index].pages;
+  document.querySelector("#read").checked = myLibrary[index].read;
+};
+
+function openDialog(addOrEdit) {  
+  //get proper dialog
+  let newDialog = document.querySelector("#container-hidden")
+  newDialog.id = "container-revealed";
+  if (addOrEdit == "add") {
+    console.log("changing wording to add")
+    console.log(document.querySelector("#instructions"))
+    document.querySelector("#instructions").textContent = "Add Book Info";
+    document.querySelector("#add").textContent = "Add";
+  } else {
+    console.log("changing wording to editing")
+    document.querySelector("#instructions").textContent = "Edit Book Info";
+    document.querySelector("#add").textContent = "Save";
+  }
+
+  //stop body scrolling
+  document.querySelector("body").style["overflow"] = "hidden";
 }
 
-function addBookDialog() {
+function closeDialog () { 
+  console.log("closing dialog")
+  let newDialog = document.querySelector("#container-revealed");
+  newDialog.id = "container-hidden";
+
+  //re-enable body scrolling
+  document.querySelector("body").style["overflow"] = "visible";
+}
+
+function addBookToLibraryObject() {
   console.dir(document.querySelector("#read"));
   let title = document.querySelector("#title").value;
   let author = document.querySelector("#author").value;
   let pages = document.querySelector("#page-count").value;
   let read = document.querySelector("#read").checked;
-  console.log(read)
   let newBook = new Book(title,author,pages,read);
   addBook(newBook);
 }
@@ -55,13 +96,84 @@ function paintLibrary() {
       paintedBooks[0].parentNode.removeChild(paintedBooks[0]);
   }
   let mainDiv = document.querySelector("main");
-  myLibrary.forEach(book => {
-    let div = document.createElement("div")
+  for (let i = 0; i < myLibrary.length; i++) {
+    let book = myLibrary[i];
+    let div = document.createElement("div");
     div.classList.add("Book");
-    div.textContent = book.info();
+    div.id = `div_${i}`;
+    let edit = document.createElement("img");
+    let title = document.createElement("h2");
+    let by_line = document.createElement("p");
+    let author = document.createElement("h3");
+    let pages = document.createElement("h4");
+    let read = document.createElement("div");
+    read.classList.add("onoffswitch");
+    read.id = `tog_${i}`;
+    let info = 
+      `<input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" 
+          id="myonoffswitch" tabindex="0" checked>
+        <label class="onoffswitch-label" for="myonoffswitch">
+            <span class="onoffswitch-inner"></span>
+            <span class="onoffswitch-switch"></span>
+        </label>`
+    
+    edit.src = "./images/edit_white_24dp.svg";
+    title.textContent = book.title;
+    by_line.textContent = "by";
+    author.textContent = book.author;
+    pages.textContent = book.pages+" pgs"
+    read.innerHTML = info;
+    div.append(edit,title,by_line,author,pages,read);
     mainDiv.appendChild(div);
-  });
+    paintReadUnreadToggle(i);
+  };
+
+
+  // change read/unread status by clicking on toggle for each book
+  [...document.getElementsByClassName("Book")].forEach(
+    (element, index, array) => {
+      element.querySelector("div").addEventListener("mousedown", (e) => {
+        const id = index;
+        invertReadUnreadSetting(id);
+        paintReadUnreadToggle(id);
+        return false;  // unsure how to stop toggling from causing scrolling back to top
+      });
+
+      element.querySelector("img").addEventListener("mousedown", (e) => {
+        const id = index;
+        editBook(index);
+        return false;  // unsure how to stop toggling from causing scrolling back to top
+      });
+    }
+);
 };
+
+function invertReadUnreadSetting(index) {
+  if (myLibrary[index].read == true) {
+    myLibrary[index].read = false;
+  } else {
+    myLibrary[index].read = true;
+  }
+};
+
+function paintReadUnreadToggle(index) {
+  let tog_label = document.querySelector(`#div_${index} .onoffswitch`);
+  let tog_inner = document.querySelector(`#div_${index} .onoffswitch-inner`);
+  let tog_switch = document.querySelector(`#div_${index} .onoffswitch-switch`);
+
+  if (myLibrary[index].read == false) {
+    tog_label.style["margin-left"] = "0"; 
+    tog_label.style["right"] = "0px";
+    tog_inner.style["margin-left"] = "-100%";
+    tog_switch.style["right"] = "60px";
+  } else {
+    tog_label.style['margin-left'] = '0';
+    tog_label.style['right'] = '0px';
+    tog_inner.style['margin-left'] = '0';
+    tog_inner.style["color"] = "red";
+    tog_switch.style["right"] = "0px";
+  }
+}
 
 myLibrary.push(new Book("The Hobbit","J.R.R. Tolkien",295,true));
 myLibrary.push(new Book("The Claw","Eli Wittington",387,false));
