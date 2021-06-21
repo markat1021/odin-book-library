@@ -25,6 +25,12 @@ commitAddBookButton.addEventListener("click", () => {
   closeDialog();
 }); 
 
+function deleteBook() {
+  myLibrary.splice(selectedBookID,1);
+  paintLibrary();
+  closeDialog();
+}
+
 function editBook(index) {
   selectedBookID = index;
   openDialog("edit");
@@ -38,14 +44,13 @@ function openDialog(addOrEdit) {
   //get proper dialog
   let newDialog = document.querySelector("#container-hidden")
   newDialog.id = "container-revealed";
+  let instructionElement = document.querySelector("#instructions");
   if (addOrEdit == "add") {
-    console.log("changing wording to add")
-    console.log(document.querySelector("#instructions"))
-    document.querySelector("#instructions").textContent = "Add Book Info";
+    instructionElement.textContent = "Add Book Info";
     document.querySelector("#add").textContent = "Add";
+    document.querySelector("#delete").style.visibility = "hidden";
   } else {
-    console.log("changing wording to editing")
-    document.querySelector("#instructions").textContent = "Edit Book Info";
+    instructionElement.textContent = "Edit Book Info";
     document.querySelector("#add").textContent = "Save";
   }
 
@@ -177,8 +182,8 @@ function paintReadUnreadToggle(index) {
 
 myLibrary.push(new Book("The Hobbit","J.R.R. Tolkien",295,true));
 myLibrary.push(new Book("The Claw","Eli Wittington",387,false));
-myLibrary.push(new Book("The GOAT","Mark Hagge",125,true));
-myLibrary.push(new Book("The GOAT2","Mark Hagge",125,true));
-myLibrary.push(new Book("The GOAT3","Mark Hagge",125,true));
-myLibrary.push(new Book("The GOAT4","Mark Hagge",125,true));
+myLibrary.push(new Book("Where Have You Been?","Mark Hagge",125,true));
+myLibrary.push(new Book("I Like to Read, and So Should You","Maslow Smith",5,true));
+myLibrary.push(new Book("In the Middle of the Night","Jimmeny Cricket",45,true));
+myLibrary.push(new Book("Cooking for Geniuses","Chef Paulo",1278,true));
 paintLibrary();
