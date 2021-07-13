@@ -52,6 +52,7 @@ function openDialog(addOrEdit) {
   } else {
     instructionElement.textContent = "Edit Book Info";
     document.querySelector("#add").textContent = "Save";
+    document.querySelector("#delete").style.visibility = "visible";
   }
 
   //stop body scrolling
